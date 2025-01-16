@@ -28,12 +28,17 @@ function saveLog(log) {
 }
 
 // Function to delete a log from Firebase
+// Function to delete a log from Firebase
 function deleteLog(logId) {
   const logRef = ref(database, 'logs/' + logId);
   remove(logRef)
     .then(() => console.log(`Log ${logId} deleted successfully`))
     .catch((error) => console.error('Error deleting log:', error));
 }
+
+// Make the function globally accessible
+window.deleteLog = deleteLog;
+
 
 // Function to fetch and display logs from Firebase
 function fetchLogs() {
