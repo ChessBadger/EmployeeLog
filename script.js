@@ -72,6 +72,13 @@ function displayLogs(logs) {
   const logDisplay = document.getElementById('log-display');
   logDisplay.innerHTML = ''; // Clear existing content
 
+  // Sort logs by date in descending order
+  logs.sort(([idA, logA], [idB, logB]) => {
+    const dateA = new Date(logA.date);
+    const dateB = new Date(logB.date);
+    return dateB - dateA; // Most recent dates first
+  });
+
   // Render each log as a card
   logs.forEach(([logId, log]) => {
     const logEntry = document.createElement('div');
@@ -90,6 +97,7 @@ function displayLogs(logs) {
     logDisplay.appendChild(logEntry);
   });
 }
+
 
 // Function to format the date to "Month Date, Year"
 function formatDate(dateString) {
