@@ -82,31 +82,44 @@ function filterLogs(period) {
   // Normalize `now` to midnight (local time)
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  const filteredLogs = logs.filter((log) => {
-    const logDate = parseLocalDate(log.date); // Parse the log date
+  // Fetch logs dynamically from Firebase
+  const logsRef = ref(database, 'logs');
+  onValue(logsRef, (snapshot) => {
+    const data = snapshot.val();
+    const logs = data ? Object.values(data) : []; // Convert Firebase data to an array
 
-    // Normalize `logDate` to midnight (local time)
-    const normalizedLogDate = new Date(logDate.getFullYear(), logDate.getMonth(), logDate.getDate());
+    const filteredLogs = logs.filter((log) => {
+      const logDate = parseLocalDate(log.date); // Parse the log date
 
-    if (period === 'day') {
-      return normalizedLogDate.getTime() === today.getTime();
-    } else if (period === 'week') {
-      const weekStart = new Date(today);
-      weekStart.setDate(today.getDate() - today.getDay()); // Sunday of this week
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6); // Saturday of this week
-
-      return normalizedLogDate >= weekStart && normalizedLogDate <= weekEnd;
-    } else if (period === 'month') {
-      return (
-        logDate.getFullYear() === now.getFullYear() &&
-        logDate.getMonth() === now.getMonth()
+      // Normalize `logDate` to midnight (local time)
+      const normalizedLogDate = new Date(
+        logDate.getFullYear(),
+        logDate.getMonth(),
+        logDate.getDate()
       );
-    }
-  });
 
-  displayLogs(filteredLogs); // Display the filtered logs
+      if (period === 'day') {
+        return normalizedLogDate.getTime() === today.getTime();
+      } else if (period === 'week') {
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - today.getDay()); // Sunday of this week
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6); // Saturday of this week
+
+        return normalizedLogDate >= weekStart && normalizedLogDate <= weekEnd;
+      } else if (period === 'month') {
+        return (
+          logDate.getFullYear() === now.getFullYear() &&
+          logDate.getMonth() === now.getMonth()
+        );
+      }
+    });
+
+    // Display the filtered logs
+    displayLogs(filteredLogs);
+  });
 }
+
 window.filterLogs = filterLogs;
 
 // Helper function to parse dates as local time
