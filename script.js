@@ -1,27 +1,48 @@
-let logs = []; // Initialize logs array
+// Import Firebase SDKs
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-// Fetch initial data from logs.json
-fetch('logs.json')
-  .then((response) => response.json())
-  .then((data) => {
-    logs = data; // Load logs from JSON file
-    // Merge with localStorage logs if available
-    const localLogs = JSON.parse(localStorage.getItem('logs')) || [];
-    logs = [...logs, ...localLogs]; // Combine both sources
-    displayLogs(logs); // Display the logs
-  })
-  .catch((error) => console.error('Error loading logs:', error));
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB3zqBVlxSK5XRt51OS1oyxL4eXRArsrjQ",
+  authDomain: "employeelog-75e30.firebaseapp.com",
+  databaseURL: "https://employeelog-75e30-default-rtdb.firebaseio.com",
+  projectId: "employeelog-75e30",
+  storageBucket: "employeelog-75e30.firebasestorage.app",
+  messagingSenderId: "815734911458",
+  appId: "1:815734911458:web:d10d9ada745d85581149bb",
+  measurementId: "G-TCDJGB05ED"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+// Function to save log to Firebase
+function saveLog(log) {
+  const timestamp = new Date().getTime(); // Use timestamp as a unique identifier
+  const logRef = ref(database, 'logs/' + timestamp); // Reference the log path
+  set(logRef, log)
+    .then(() => console.log('Log saved successfully'))
+    .catch((error) => console.error('Error saving log:', error));
+}
+
+// Function to fetch and display logs from Firebase
+function fetchLogs() {
+  const logsRef = ref(database, 'logs'); // Reference the logs path
+  onValue(logsRef, (snapshot) => {
+    const data = snapshot.val();
+    const logs = data ? Object.values(data) : []; // Convert the data object to an array
+    displayLogs(logs); // Call your existing display function to show logs
+  });
+}
 
 // Add event listener to the form for adding new log entries
 document.getElementById('log-form').addEventListener('submit', (e) => {
   e.preventDefault();
 
-  // Get the date value and ensure it's correctly formatted
-  const dateInput = document.getElementById('date').value;
-  const localDate = new Date(dateInput); // Treat the selected date as local time
-
   const newLog = {
-    date: localDate.toISOString().split('T')[0], // Store date in YYYY-MM-DD format
+    date: document.getElementById('date').value,
     employee: document.getElementById('employee').value,
     interaction: document.getElementById('interaction').value,
     topics: document.getElementById('topics').value,
@@ -29,17 +50,8 @@ document.getElementById('log-form').addEventListener('submit', (e) => {
     nextSteps: document.getElementById('next-steps').value,
   };
 
-  // Add the new log to the logs array
-  logs.push(newLog);
-
-  // Save new logs to localStorage
-  localStorage.setItem('logs', JSON.stringify(logs));
-
-  // Refresh the display
-  displayLogs(logs);
-
-  // Reset the form
-  e.target.reset();
+  saveLog(newLog); // Save the new log entry to Firebase
+  e.target.reset(); // Reset the form
 });
 
 // Function to display logs in the log-display section
@@ -105,10 +117,12 @@ function parseLocalDate(dateString) {
   return new Date(year, month - 1, day); // Months are 0-indexed in JS
 }
 
-
 // Function to show all logs
 function showAllLogs() {
-  displayLogs(logs);
+  fetchLogs(); // Display all logs from Firebase
 }
 
-// Display all logs on page load
+// Fetch logs from Firebase on page load
+window.onload = () => {
+  fetchLogs();
+};
