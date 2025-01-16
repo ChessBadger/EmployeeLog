@@ -146,6 +146,27 @@
   border-top: 1px solid #444;
 }
 
+.center-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px; /* Add spacing between the button and the form */
+}
+
+#toggle-form-btn {
+  padding: 12px 20px;
+  font-size: 14px;
+  background-color: #bb86fc;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+#toggle-form-btn:hover {
+  background-color: #bb86fc;
+  color: #121212;
+}
 
 /* Delete Button Styling */
 .delete-btn {
@@ -166,7 +187,12 @@
   background-color: #ff2b2b;
 }
 
-  
+#log-form {
+  display: none; /* Hide the form by default */
+  flex-direction: column; /* Retain the layout for when it's displayed */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Optional smooth transitions */
+}
+
   
   /* Responsive Design */
   @media (max-width: 600px) {

@@ -18,6 +18,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
+document.getElementById('toggle-form-btn').addEventListener('click', () => {
+  const form = document.getElementById('log-form');
+  const toggleBtn = document.getElementById('toggle-form-btn');
+  
+  if (form.style.display === 'none' || form.style.display === '') {
+    form.style.display = 'flex'; // Show the form
+    toggleBtn.textContent = 'Hide Entry Menu';
+  } else {
+    form.style.display = 'none'; // Hide the form
+    toggleBtn.textContent = 'Show Entry Menu';
+  }
+});
+
+// Set initial button text and form visibility on page load
+window.onload = () => {
+  document.getElementById('log-form').style.display = 'none'; // Ensure the form is hidden
+  document.getElementById('toggle-form-btn').textContent = 'Show Entry Menu'; // Set button text
+};
+
+
 // Function to save log to Firebase
 function saveLog(log) {
   const timestamp = new Date().getTime(); // Use timestamp as a unique identifier
@@ -27,7 +47,6 @@ function saveLog(log) {
     .catch((error) => console.error('Error saving log:', error));
 }
 
-// Function to delete a log from Firebase
 // Function to delete a log from Firebase
 function deleteLog(logId) {
   const logRef = ref(database, 'logs/' + logId);
