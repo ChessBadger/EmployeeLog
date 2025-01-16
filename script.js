@@ -86,7 +86,7 @@ function displayLogs(logs) {
     logEntry.innerHTML = `
       <h1><strong>${log.employee}</strong> </h1>
       <hr class="separator">
-      <p><strong>Date:</strong> ${formatDate(log.date)}</p>
+      <h3><strong>${formatDate(log.date)}</strong> </h3>
       <p><strong>Interaction:</strong> ${log.interaction}</p>
       <p><strong>Topics:</strong> ${log.topics}</p>
       <p><strong>Feedback:</strong> ${log.feedback}</p>
