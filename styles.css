@@ -123,6 +123,48 @@
     border-top: 1px solid #444;
     margin: 10px 0;
   }
+
+  /* Log Card Styling */
+.log-card {
+  background: #2e2e2e;
+  margin-bottom: 15px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.log-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+}
+
+/* Separator Line */
+.separator {
+  margin: 15px 0;
+  border: none;
+  border-top: 1px solid #444;
+}
+
+/* Delete Button Styling */
+.delete-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #ff5555;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #ff2b2b;
+}
+
   
   
   /* Responsive Design */

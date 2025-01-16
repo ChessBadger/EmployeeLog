@@ -1,6 +1,6 @@
 // Import Firebase SDKs
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -27,12 +27,20 @@ function saveLog(log) {
     .catch((error) => console.error('Error saving log:', error));
 }
 
+// Function to delete a log from Firebase
+function deleteLog(logId) {
+  const logRef = ref(database, 'logs/' + logId);
+  remove(logRef)
+    .then(() => console.log(`Log ${logId} deleted successfully`))
+    .catch((error) => console.error('Error deleting log:', error));
+}
+
 // Function to fetch and display logs from Firebase
 function fetchLogs() {
   const logsRef = ref(database, 'logs'); // Reference the logs path
   onValue(logsRef, (snapshot) => {
     const data = snapshot.val();
-    const logs = data ? Object.values(data) : []; // Convert the data object to an array
+    const logs = data ? Object.entries(data) : []; // Convert Firebase data to an array of [key, value]
     displayLogs(logs); // Call your existing display function to show logs
   });
 }
@@ -55,24 +63,34 @@ document.getElementById('log-form').addEventListener('submit', (e) => {
 });
 
 // Function to display logs in the log-display section
-function displayLogs(filteredLogs) {
+function displayLogs(logs) {
   const logDisplay = document.getElementById('log-display');
   logDisplay.innerHTML = ''; // Clear existing content
 
   // Render each log as a card
-  filteredLogs.forEach((log) => {
+  logs.forEach(([logId, log]) => {
     const logEntry = document.createElement('div');
+    logEntry.classList.add('log-card');
     logEntry.innerHTML = `
-      <p><strong>Date:</strong> ${log.date}</p>
-      <p><strong>Employee:</strong> ${log.employee}</p>
+      <h1><strong>${log.employee}</strong> </h1>
+      <hr class="separator">
+      <p><strong>Date:</strong> ${formatDate(log.date)}</p>
       <p><strong>Interaction:</strong> ${log.interaction}</p>
       <p><strong>Topics:</strong> ${log.topics}</p>
       <p><strong>Feedback:</strong> ${log.feedback}</p>
       <p><strong>Next Steps:</strong> ${log.nextSteps}</p>
-      <hr>
+      <hr class="separator">
+      <button class="delete-btn" onclick="deleteLog('${logId}')">Delete</button>
     `;
     logDisplay.appendChild(logEntry);
   });
+}
+
+// Function to format the date to "Month Date, Year"
+function formatDate(dateString) {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const date = new Date(dateString);
+  return date.toLocaleDateString(undefined, options);
 }
 
 // Function to filter logs by time periods
@@ -86,9 +104,9 @@ function filterLogs(period) {
   const logsRef = ref(database, 'logs');
   onValue(logsRef, (snapshot) => {
     const data = snapshot.val();
-    const logs = data ? Object.values(data) : []; // Convert Firebase data to an array
+    const logs = data ? Object.entries(data) : []; // Convert Firebase data to an array of [key, value]
 
-    const filteredLogs = logs.filter((log) => {
+    const filteredLogs = logs.filter(([logId, log]) => {
       const logDate = parseLocalDate(log.date); // Parse the log date
 
       // Normalize `logDate` to midnight (local time)
@@ -119,7 +137,6 @@ function filterLogs(period) {
     displayLogs(filteredLogs);
   });
 }
-
 window.filterLogs = filterLogs;
 
 // Helper function to parse dates as local time
