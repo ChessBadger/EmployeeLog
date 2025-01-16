@@ -1,0 +1,153 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background: #121212;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #bb86fc;
+    margin-bottom: 20px;
+  }
+  
+  /* Form Styles */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  form input,
+  form button {
+    margin: 10px 0;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+  }
+  
+  form input {
+    background: #2e2e2e;
+    color: #e0e0e0;
+  }
+  
+  form button {
+    background: #bb86fc;
+    color: #121212;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  
+  form button:hover {
+    background: #9c4dcc;
+  }
+  
+  /* Filters */
+  .filters {
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .filters button {
+    margin: 5px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #2e2e2e;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .filters button:hover {
+    background: #bb86fc;
+    color: #121212;
+  }
+  
+/* Updated Log Display Styles */
+#log-display {
+    margin-top: 20px;
+  }
+  
+  /* Styling for Each Card */
+  #log-display div {
+    background: #2e2e2e;
+    margin-bottom: 15px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  #log-display div:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+  }
+  
+  /* Styling for Text Inside Cards */
+  #log-display div p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #e0e0e0;
+    line-height: 1.5;
+  }
+  
+  /* Highlight Key Info */
+  #log-display div p strong {
+    color: #bb86fc;
+    font-weight: bold;
+  }
+  
+  /* Add Divider Between Entries */
+  #log-display div hr {
+    border: none;
+    border-top: 1px solid #444;
+    margin: 10px 0;
+  }
+  
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .container {
+      width: 90%;
+      padding: 15px;
+    }
+  
+    h1 {
+      font-size: 24px;
+    }
+  
+    form input,
+    form button {
+      font-size: 14px;
+    }
+  
+    .filters button {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+  
+    #log-display div {
+      font-size: 14px;
+    }
+  }
+  
