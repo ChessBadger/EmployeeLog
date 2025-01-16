@@ -89,10 +89,8 @@ function filterLogs(period) {
     const normalizedLogDate = new Date(logDate.getFullYear(), logDate.getMonth(), logDate.getDate());
 
     if (period === 'day') {
-      // Compare normalized dates for "Today"
       return normalizedLogDate.getTime() === today.getTime();
     } else if (period === 'week') {
-      // Start and end of the current week (normalized)
       const weekStart = new Date(today);
       weekStart.setDate(today.getDate() - today.getDay()); // Sunday of this week
       const weekEnd = new Date(weekStart);
@@ -100,7 +98,6 @@ function filterLogs(period) {
 
       return normalizedLogDate >= weekStart && normalizedLogDate <= weekEnd;
     } else if (period === 'month') {
-      // Match the year and month
       return (
         logDate.getFullYear() === now.getFullYear() &&
         logDate.getMonth() === now.getMonth()
@@ -110,6 +107,7 @@ function filterLogs(period) {
 
   displayLogs(filteredLogs); // Display the filtered logs
 }
+window.filterLogs = filterLogs;
 
 // Helper function to parse dates as local time
 function parseLocalDate(dateString) {
@@ -121,6 +119,7 @@ function parseLocalDate(dateString) {
 function showAllLogs() {
   fetchLogs(); // Display all logs from Firebase
 }
+window.showAllLogs = showAllLogs;
 
 // Fetch logs from Firebase on page load
 window.onload = () => {
