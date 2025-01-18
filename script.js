@@ -65,7 +65,7 @@ document.getElementById('log-form').addEventListener('submit', (e) => {
     date: document.getElementById('date').value,
     employee: document.getElementById('employee').value,
     feedback: document.getElementById('feedback').value,
-    nextSteps: document.getElementById('next-steps').value,
+    nextSteps: document.getElementById('next-steps').value || "", // Allow empty Next Steps
   };
 
   saveLog(newLog); // Save the new log entry to Firebase
@@ -105,7 +105,11 @@ function displayLogsGroupedByDate(logs) {
       logEntry.innerHTML = `
         <h3><strong>${log.employee}</strong></h3>
         <p><strong>Feedback:</strong> ${log.feedback}</p>
-        <p><strong>Next Steps:</strong> ${log.nextSteps}</p>
+        ${
+          log.nextSteps
+            ? `<p><strong>Next Steps:</strong> ${log.nextSteps}</p>`
+            : ""
+        }
         <hr class="seperator">
         <button class="delete-btn" onclick="deleteLog('${log.logId}')">Delete</button>
       `;
@@ -116,13 +120,93 @@ function displayLogsGroupedByDate(logs) {
   });
 }
 
-// Fetch logs and display them grouped by date
-function fetchLogs() {
-  const logsRef = ref(database, 'logs'); // Reference the logs path
+// Function to filter logs by period (day, week, month)
+function filterLogs(period) {
+  const now = new Date(); // Current date and time
+
+  // Normalize `now` to midnight (local time)
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const logsRef = ref(database, 'logs');
   onValue(logsRef, (snapshot) => {
     const data = snapshot.val();
-    const logs = data ? Object.entries(data) : []; // Convert Firebase data to an array of [key, value]
-    displayLogsGroupedByDate(logs); // Call the grouped display function
+    const logs = data ? Object.entries(data) : [];
+
+    const filteredLogs = logs.filter(([logId, log]) => {
+      const logDate = new Date(log.date);
+
+      if (period === 'day') {
+        return logDate.toDateString() === today.toDateString();
+      } else if (period === 'week') {
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+        return logDate >= startOfWeek && logDate <= endOfWeek;
+      } else if (period === 'month') {
+        return (
+          logDate.getFullYear() === now.getFullYear() &&
+          logDate.getMonth() === now.getMonth()
+        );
+      }
+    });
+
+    displayLogsGroupedByDate(filteredLogs);
+  });
+}
+
+// Function to filter logs with "Next Steps"
+function filterLogsWithNextSteps(logs) {
+  const filteredLogs = logs.filter(([logId, log]) => log.nextSteps && log.nextSteps.trim() !== "");
+  displayLogsGroupedByDate(filteredLogs);
+}
+
+// Add filter buttons
+function addFilterButtons() {
+  const filtersContainer = document.querySelector('.filters');
+
+  // Existing filter buttons
+  const timeFilters = [
+    { label: "Today", period: "day" },
+    { label: "This Week", period: "week" },
+    { label: "This Month", period: "month" },
+  ];
+
+  timeFilters.forEach(({ label, period }) => {
+    const button = document.createElement('button');
+    button.textContent = label;
+    button.onclick = () => filterLogs(period);
+    filtersContainer.appendChild(button);
+  });
+
+  // "With Next Steps" filter button
+  const nextStepsFilterButton = document.createElement('button');
+  nextStepsFilterButton.textContent = "With Next Steps";
+  nextStepsFilterButton.onclick = () => {
+    const logsRef = ref(database, 'logs');
+    onValue(logsRef, (snapshot) => {
+      const data = snapshot.val();
+      const logs = data ? Object.entries(data) : [];
+      filterLogsWithNextSteps(logs);
+    });
+  };
+  filtersContainer.appendChild(nextStepsFilterButton);
+
+  // "Show All" filter button
+  const showAllButton = document.createElement('button');
+  showAllButton.textContent = "Show All";
+  showAllButton.onclick = fetchLogs; // Show all logs without filtering
+  filtersContainer.appendChild(showAllButton);
+}
+
+// Fetch logs and display them grouped by date
+function fetchLogs() {
+  const logsRef = ref(database, 'logs');
+  onValue(logsRef, (snapshot) => {
+    const data = snapshot.val();
+    const logs = data ? Object.entries(data) : [];
+    displayLogsGroupedByDate(logs);
   });
 }
 
@@ -133,7 +217,8 @@ function formatDate(dateString) {
   return date.toLocaleDateString(undefined, options);
 }
 
-// Fetch logs from Firebase on page load
+// Add filter buttons and fetch logs on page load
 window.onload = () => {
+  addFilterButtons();
   fetchLogs();
 };

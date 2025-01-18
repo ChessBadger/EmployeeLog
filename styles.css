@@ -207,7 +207,21 @@
   margin-bottom: 10px;
   font-size: 20px;
 }
+.filters button {
+  margin: 5px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #2e2e2e;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
 
+.filters button:hover {
+  background: #bb86fc;
+  color: #121212;
+}
   
   /* Responsive Design */
   @media (max-width: 600px) {
