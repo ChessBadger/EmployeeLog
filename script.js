@@ -46,6 +46,68 @@ function saveLog(log) {
     .catch((error) => console.error('Error saving log:', error));
 }
 
+function editLog(logId) {
+  console.log(`Attempting to edit log with ID: ${logId}`);
+  
+  const logRef = ref(database, 'logs/' + logId);
+  onValue(logRef, (snapshot) => {
+    const log = snapshot.val();
+    
+    if (log) {
+      console.log('Log data retrieved:', log);
+
+      // Populate form fields
+      document.getElementById('date').value = log.date;
+      document.getElementById('employee').value = log.employee;
+      document.getElementById('feedback').value = log.feedback;
+      document.getElementById('next-steps').value = log.nextSteps?.trim() || "";
+
+      // Ensure the form is visible
+      const form = document.getElementById('log-form');
+      form.style.display = 'flex';
+
+      // Change button text
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.textContent = 'Submit Edit';
+      submitButton.style.backgroundColor = '#4CAF50'; // Optional styling for clarity
+
+      // Update the form submit handler
+      form.onsubmit = (e) => {
+        e.preventDefault();
+
+        const updatedLog = {
+          date: document.getElementById('date').value,
+          employee: document.getElementById('employee').value,
+          feedback: document.getElementById('feedback').value,
+          nextSteps: document.getElementById('next-steps').value.trim() || "",
+        };
+
+        console.log('Updated log:', updatedLog);
+
+        set(logRef, updatedLog)
+          .then(() => {
+            console.log('Log updated successfully');
+            form.reset(); // Clear the form
+            form.style.display = 'none'; // Optionally hide the form
+
+            // Reset button text to "Add Entry" for new entries
+            submitButton.textContent = 'Add Entry';
+            submitButton.style.backgroundColor = ''; // Reset styling
+            fetchLogs(); // Refresh the display
+          })
+          .catch((error) => console.error('Error updating log:', error));
+      };
+    } else {
+      console.error('Log data not found for ID:', logId);
+    }
+  }, (error) => {
+    console.error('Error fetching log:', error);
+  });
+}
+
+window.editLog = editLog;
+
+
 // Function to delete a log from Firebase
 function deleteLog(logId) {
   const logRef = ref(database, 'logs/' + logId);
@@ -112,6 +174,7 @@ function displayLogsGroupedByDate(logs) {
             : ""
         }
         <hr class="separator">
+        <button class="edit-btn" onclick="editLog('${log.logId}')">Edit</button>
         <button class="delete-btn" onclick="deleteLog('${log.logId}')">Delete</button>
       `;
       dateGroup.appendChild(logEntry);
@@ -254,7 +317,6 @@ searchInput.addEventListener('keypress', (e) => {
     performSearch(); // Trigger the search
   }
 });
-
 
 
 // Add filter buttons and fetch logs on page load
