@@ -89,6 +89,7 @@ function saveLog(log) {
 
 
 function editLog(logId) {
+  window.scrollTo(0, 0); // Scroll to the top of the page
   console.log(`Attempting to edit log with ID: ${logId}`);
   
   const logRef = ref(database, 'logs/' + logId);
