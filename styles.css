@@ -276,8 +276,9 @@
   /* Responsive Design */
   @media (max-width: 600px) {
     .container {
-      width: 90%;
-      padding: 15px;
+      width: 100%;
+      margin: 10px auto; /* Adjust for a smaller margin */
+      padding: 10px; /* Reduce padding for better space usage */
     }
   
     h1 {
