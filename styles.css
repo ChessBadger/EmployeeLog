@@ -15,7 +15,7 @@
   }
   
   .container {
-    max-width: 65%;
+    width: 65%;
     margin: 20px auto;
     padding: 20px;
     background: #1e1e1e;
@@ -271,6 +271,22 @@
 .edit-btn:hover {
   background-color: #45a049;
 }
+
+#name-selector {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#name-selector select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #2e2e2e;
+  color: #e0e0e0;
+  margin-right: 10px;
+}
+
 
   
   /* Responsive Design */

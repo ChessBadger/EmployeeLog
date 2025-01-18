@@ -37,6 +37,40 @@ window.onload = () => {
   document.getElementById('toggle-form-btn').textContent = 'Show Entry Menu'; // Set button text
 };
 
+// Function to populate the name dropdown
+function populateNameDropdown(logs) {
+  const nameDropdown = document.getElementById('employee-names');
+  nameDropdown.innerHTML = '<option value="">--All Employees--</option>'; // Reset options
+
+  const uniqueNames = new Set(logs.map(([_, log]) => log.employee).filter(name => name));
+
+  uniqueNames.forEach((name) => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    nameDropdown.appendChild(option);
+  });
+}
+
+// Event listener for filtering by name
+document.getElementById('filter-by-name').addEventListener('click', () => {
+  const selectedName = document.getElementById('employee-names').value;
+
+  const logsRef = ref(database, 'logs');
+  onValue(logsRef, (snapshot) => {
+    const data = snapshot.val();
+    const logs = data ? Object.entries(data) : [];
+
+    const filteredLogs = selectedName
+      ? logs.filter(([_, log]) => log.employee === selectedName)
+      : logs;
+
+    displayLogsGroupedByDate(filteredLogs);
+  });
+});
+
+
+
 // Function to save log to Firebase
 function saveLog(log) {
   if (!log.date || isNaN(new Date(log.date))) {
@@ -140,6 +174,8 @@ document.getElementById('log-form').addEventListener('submit', (e) => {
   saveLog(newLog); // Save the new log entry to Firebase
   e.target.reset(); // Reset the form
 });
+
+
 
 // Function to display logs grouped by date
 function displayLogsGroupedByDate(logs) {
@@ -292,8 +328,8 @@ function fetchLogs() {
       }
     });
 
-    // Filter out logs with invalid dates and display the rest
     const validLogs = logs.filter(([logId, log]) => log.date && !isNaN(new Date(log.date)));
+    populateNameDropdown(validLogs); // Populate the dropdown with unique names
     displayLogsGroupedByDate(validLogs);
   });
 }
