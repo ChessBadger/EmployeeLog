@@ -126,7 +126,7 @@
 
   /* Log Card Styling */
 .log-card {
-  background: #2e2e2e;
+  background: #3d3d3d !important;
   margin-bottom: 15px;
   padding: 20px;
   border-radius: 12px;
@@ -143,7 +143,7 @@
 .separator {
   margin: 15px 0;
   border: none;
-  border-top: 1px solid #444;
+  border-top: 1px solid #858585 !important;
 }
 
 .center-toggle {
