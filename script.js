@@ -105,9 +105,10 @@ function displayLogsGroupedByDate(logs) {
       logEntry.innerHTML = `
         <h3><strong>${log.employee}</strong></h3>
         <p><strong>Feedback:</strong> ${log.feedback}</p>
+        
         ${
           log.nextSteps?.trim()
-            ? `<p><strong>Next Steps:</strong> ${log.nextSteps}</p>`
+            ? `<hr class="separator"> <p><strong>Next Steps:</strong> ${log.nextSteps}</p>`
             : ""
         }
         <hr class="separator">
