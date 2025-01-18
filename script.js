@@ -217,6 +217,44 @@ function formatDate(dateString) {
   return date.toLocaleDateString(undefined, options);
 }
 
+const searchInput = document.getElementById('search-query');
+const searchButton = document.getElementById('search-button');
+
+// Function to perform search
+function performSearch() {
+  const query = searchInput.value.toLowerCase();
+  const logsRef = ref(database, 'logs');
+
+  onValue(logsRef, (snapshot) => {
+    const data = snapshot.val();
+    const logs = data ? Object.entries(data) : [];
+
+    const filteredLogs = logs.filter(([logId, log]) => {
+      const logDate = log.date.toLowerCase();
+      const logEmployee = log.employee.toLowerCase();
+
+      // Match query against date or employee name
+      return logDate.includes(query) || logEmployee.includes(query);
+    });
+
+    displayLogsGroupedByDate(filteredLogs);
+    searchInput.value = ''; // Clear the search field after the search
+  });
+}
+
+// Add event listener for the search button
+searchButton.addEventListener('click', performSearch);
+
+// Add event listener for pressing "Enter" in the search input
+searchInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault(); // Prevent form submission if inside a form
+    performSearch(); // Trigger the search
+  }
+});
+
+
+
 // Add filter buttons and fetch logs on page load
 window.onload = () => {
   addFilterButtons();
