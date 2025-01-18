@@ -338,7 +338,7 @@ function fetchLogs() {
 
 // Function to format the date to "Day, Month Date, Year"
 function formatDate(dateString) {
-  const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+  const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' };
   const date = new Date(dateString);
   return date.toLocaleDateString(undefined, options);
 }
