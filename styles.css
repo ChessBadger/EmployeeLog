@@ -25,7 +25,7 @@
   
   h1 {
     text-align: center;
-    color: #bb86fc;
+    color: #86fcf2;
     margin-bottom: 20px;
   }
   
@@ -50,7 +50,7 @@
   }
   
   form button {
-    background: #bb86fc;
+    background: #86fcf2;
     color: #121212;
     cursor: pointer;
     font-weight: bold;
@@ -79,7 +79,7 @@
   }
   
   .filters button:hover {
-    background: #bb86fc;
+    background: #86fcf2;
     color: #121212;
   }
   
@@ -113,7 +113,7 @@
   
   /* Highlight Key Info */
   #log-display div p strong {
-    color: #bb86fc;
+    color: #86fcf2;
     font-weight: bold;
   }
   
@@ -155,7 +155,7 @@
 #toggle-form-btn {
   padding: 12px 20px;
   font-size: 14px;
-  background-color: #bb86fc;
+  background-color: #86fcf2;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -166,7 +166,7 @@
 }
 
 #toggle-form-btn:hover {
-  background-color: #bb86fc;
+  background-color: #86fcf2;
   color: #121212;
 }
 
@@ -203,7 +203,7 @@
 }
 
 .date-group h2 {
-  color: #bb86fc;
+  color: #86fcf2;
   margin-bottom: 10px;
   font-size: 20px;
 }
@@ -219,7 +219,7 @@
 }
 
 .filters button:hover {
-  background: #bb86fc;
+  background: #86fcf2;
   color: #121212;
 }
 
@@ -244,7 +244,7 @@
   font-size: 16px;
   border: none;
   border-radius: 8px;
-  background: #bb86fc;
+  background: #86fcf2;
   color: #121212;
   cursor: pointer;
   transition: background 0.3s ease;
