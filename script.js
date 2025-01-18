@@ -106,11 +106,11 @@ function displayLogsGroupedByDate(logs) {
         <h3><strong>${log.employee}</strong></h3>
         <p><strong>Feedback:</strong> ${log.feedback}</p>
         ${
-          log.nextSteps
+          log.nextSteps?.trim()
             ? `<p><strong>Next Steps:</strong> ${log.nextSteps}</p>`
             : ""
         }
-        <hr class="seperator">
+        <hr class="separator">
         <button class="delete-btn" onclick="deleteLog('${log.logId}')">Delete</button>
       `;
       dateGroup.appendChild(logEntry);
@@ -119,6 +119,7 @@ function displayLogsGroupedByDate(logs) {
     logDisplay.appendChild(dateGroup);
   });
 }
+
 
 // Function to filter logs by period (day, week, month)
 function filterLogs(period) {
@@ -210,9 +211,9 @@ function fetchLogs() {
   });
 }
 
-// Function to format the date to "Month Date, Year"
+// Function to format the date to "Day, Month Date, Year"
 function formatDate(dateString) {
-  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
   const date = new Date(dateString);
   return date.toLocaleDateString(undefined, options);
 }
