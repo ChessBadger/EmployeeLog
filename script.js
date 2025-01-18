@@ -284,9 +284,20 @@ function fetchLogs() {
   onValue(logsRef, (snapshot) => {
     const data = snapshot.val();
     const logs = data ? Object.entries(data) : [];
-    displayLogsGroupedByDate(logs);
+
+    logs.forEach(([logId, log]) => {
+      if (!log.date || isNaN(new Date(log.date))) {
+        console.warn(`Deleting log with invalid date:`, log);
+        deleteLog(logId); // Call the deleteLog function to remove invalid entries
+      }
+    });
+
+    // Filter out logs with invalid dates and display the rest
+    const validLogs = logs.filter(([logId, log]) => log.date && !isNaN(new Date(log.date)));
+    displayLogsGroupedByDate(validLogs);
   });
 }
+
 
 // Function to format the date to "Day, Month Date, Year"
 function formatDate(dateString) {
