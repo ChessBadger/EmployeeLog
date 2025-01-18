@@ -39,12 +39,19 @@ window.onload = () => {
 
 // Function to save log to Firebase
 function saveLog(log) {
+  if (!log.date || isNaN(new Date(log.date))) {
+    console.error('Error: Invalid or missing date in log:', log);
+    alert('Date is required. Please enter a valid date.');
+    return; // Prevent saving logs with invalid dates
+  }
+
   const timestamp = new Date().getTime(); // Use timestamp as a unique identifier
   const logRef = ref(database, 'logs/' + timestamp); // Reference the log path
   set(logRef, log)
     .then(() => console.log('Log saved successfully'))
     .catch((error) => console.error('Error saving log:', error));
 }
+
 
 function editLog(logId) {
   console.log(`Attempting to edit log with ID: ${logId}`);
@@ -141,6 +148,11 @@ function displayLogsGroupedByDate(logs) {
 
   // Group logs by date
   const logsByDate = logs.reduce((acc, [logId, log]) => {
+    if (!log.date || isNaN(new Date(log.date))) {
+      console.warn(`Skipping log with invalid date:`, log);
+      return acc; // Skip invalid date logs
+    }
+
     if (!acc[log.date]) {
       acc[log.date] = [];
     }
@@ -183,6 +195,7 @@ function displayLogsGroupedByDate(logs) {
     logDisplay.appendChild(dateGroup);
   });
 }
+
 
 
 // Function to filter logs by period (day, week, month)
