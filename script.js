@@ -53,7 +53,7 @@ function populateNameDropdown(logs) {
 }
 
 // Event listener for filtering by name
-document.getElementById('filter-by-name').addEventListener('click', () => {
+document.getElementById('employee-names').addEventListener('change', () => {
   const selectedName = document.getElementById('employee-names').value;
 
   const logsRef = ref(database, 'logs');
@@ -68,6 +68,7 @@ document.getElementById('filter-by-name').addEventListener('click', () => {
     displayLogsGroupedByDate(filteredLogs);
   });
 });
+
 
 
 
