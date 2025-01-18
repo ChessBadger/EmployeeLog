@@ -37,7 +37,6 @@ window.onload = () => {
   document.getElementById('toggle-form-btn').textContent = 'Show Entry Menu'; // Set button text
 };
 
-
 // Function to save log to Firebase
 function saveLog(log) {
   const timestamp = new Date().getTime(); // Use timestamp as a unique identifier
@@ -58,17 +57,6 @@ function deleteLog(logId) {
 // Make the function globally accessible
 window.deleteLog = deleteLog;
 
-
-// Function to fetch and display logs from Firebase
-function fetchLogs() {
-  const logsRef = ref(database, 'logs'); // Reference the logs path
-  onValue(logsRef, (snapshot) => {
-    const data = snapshot.val();
-    const logs = data ? Object.entries(data) : []; // Convert Firebase data to an array of [key, value]
-    displayLogs(logs); // Call your existing display function to show logs
-  });
-}
-
 // Add event listener to the form for adding new log entries
 document.getElementById('log-form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -76,8 +64,6 @@ document.getElementById('log-form').addEventListener('submit', (e) => {
   const newLog = {
     date: document.getElementById('date').value,
     employee: document.getElementById('employee').value,
-    interaction: document.getElementById('interaction').value,
-    topics: document.getElementById('topics').value,
     feedback: document.getElementById('feedback').value,
     nextSteps: document.getElementById('next-steps').value,
   };
@@ -86,37 +72,59 @@ document.getElementById('log-form').addEventListener('submit', (e) => {
   e.target.reset(); // Reset the form
 });
 
-// Function to display logs in the log-display section
-function displayLogs(logs) {
+// Function to display logs grouped by date
+function displayLogsGroupedByDate(logs) {
   const logDisplay = document.getElementById('log-display');
   logDisplay.innerHTML = ''; // Clear existing content
 
-  // Sort logs by date in descending order
-  logs.sort(([idA, logA], [idB, logB]) => {
-    const dateA = new Date(logA.date);
-    const dateB = new Date(logB.date);
-    return dateB - dateA; // Most recent dates first
-  });
+  // Group logs by date
+  const logsByDate = logs.reduce((acc, [logId, log]) => {
+    if (!acc[log.date]) {
+      acc[log.date] = [];
+    }
+    acc[log.date].push({ logId, ...log });
+    return acc;
+  }, {});
 
-  // Render each log as a card
-  logs.forEach(([logId, log]) => {
-    const logEntry = document.createElement('div');
-    logEntry.classList.add('log-card');
-    logEntry.innerHTML = `
-      <h1><strong>${log.employee}</strong> </h1>
-      <hr class="separator">
-      <h3><strong>${formatDate(log.date)}</strong> </h3>
-      <p><strong>Interaction:</strong> ${log.interaction}</p>
-      <p><strong>Topics:</strong> ${log.topics}</p>
-      <p><strong>Feedback:</strong> ${log.feedback}</p>
-      <p><strong>Next Steps:</strong> ${log.nextSteps}</p>
-      <hr class="separator">
-      <button class="delete-btn" onclick="deleteLog('${logId}')">Delete</button>
-    `;
-    logDisplay.appendChild(logEntry);
+  // Sort dates in descending order
+  const sortedDates = Object.keys(logsByDate).sort(
+    (a, b) => new Date(b) - new Date(a)
+  );
+
+  // Render grouped logs
+  sortedDates.forEach((date) => {
+    const dateGroup = document.createElement('div');
+    dateGroup.classList.add('date-group');
+
+    const formattedDate = formatDate(date); // Format the date
+    dateGroup.innerHTML = `<h2>${formattedDate}</h2>`;
+
+    logsByDate[date].forEach((log) => {
+      const logEntry = document.createElement('div');
+      logEntry.classList.add('log-card');
+      logEntry.innerHTML = `
+        <h3><strong>${log.employee}</strong></h3>
+        <p><strong>Feedback:</strong> ${log.feedback}</p>
+        <p><strong>Next Steps:</strong> ${log.nextSteps}</p>
+        <hr class="seperator">
+        <button class="delete-btn" onclick="deleteLog('${log.logId}')">Delete</button>
+      `;
+      dateGroup.appendChild(logEntry);
+    });
+
+    logDisplay.appendChild(dateGroup);
   });
 }
 
+// Fetch logs and display them grouped by date
+function fetchLogs() {
+  const logsRef = ref(database, 'logs'); // Reference the logs path
+  onValue(logsRef, (snapshot) => {
+    const data = snapshot.val();
+    const logs = data ? Object.entries(data) : []; // Convert Firebase data to an array of [key, value]
+    displayLogsGroupedByDate(logs); // Call the grouped display function
+  });
+}
 
 // Function to format the date to "Month Date, Year"
 function formatDate(dateString) {
@@ -124,64 +132,6 @@ function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleDateString(undefined, options);
 }
-
-// Function to filter logs by time periods
-function filterLogs(period) {
-  const now = new Date(); // Current date and time
-
-  // Normalize `now` to midnight (local time)
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-  // Fetch logs dynamically from Firebase
-  const logsRef = ref(database, 'logs');
-  onValue(logsRef, (snapshot) => {
-    const data = snapshot.val();
-    const logs = data ? Object.entries(data) : []; // Convert Firebase data to an array of [key, value]
-
-    const filteredLogs = logs.filter(([logId, log]) => {
-      const logDate = parseLocalDate(log.date); // Parse the log date
-
-      // Normalize `logDate` to midnight (local time)
-      const normalizedLogDate = new Date(
-        logDate.getFullYear(),
-        logDate.getMonth(),
-        logDate.getDate()
-      );
-
-      if (period === 'day') {
-        return normalizedLogDate.getTime() === today.getTime();
-      } else if (period === 'week') {
-        const weekStart = new Date(today);
-        weekStart.setDate(today.getDate() - today.getDay()); // Sunday of this week
-        const weekEnd = new Date(weekStart);
-        weekEnd.setDate(weekStart.getDate() + 6); // Saturday of this week
-
-        return normalizedLogDate >= weekStart && normalizedLogDate <= weekEnd;
-      } else if (period === 'month') {
-        return (
-          logDate.getFullYear() === now.getFullYear() &&
-          logDate.getMonth() === now.getMonth()
-        );
-      }
-    });
-
-    // Display the filtered logs
-    displayLogs(filteredLogs);
-  });
-}
-window.filterLogs = filterLogs;
-
-// Helper function to parse dates as local time
-function parseLocalDate(dateString) {
-  const [year, month, day] = dateString.split('-').map(Number);
-  return new Date(year, month - 1, day); // Months are 0-indexed in JS
-}
-
-// Function to show all logs
-function showAllLogs() {
-  fetchLogs(); // Display all logs from Firebase
-}
-window.showAllLogs = showAllLogs;
 
 // Fetch logs from Firebase on page load
 window.onload = () => {

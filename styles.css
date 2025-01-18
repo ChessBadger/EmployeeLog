@@ -195,6 +195,19 @@
   transition: opacity 0.3s ease, visibility 0.3s ease; /* Optional smooth transitions */
 }
 
+.date-group {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+}
+
+.date-group h2 {
+  color: #bb86fc;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
   
   /* Responsive Design */
   @media (max-width: 600px) {
