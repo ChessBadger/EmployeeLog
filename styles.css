@@ -58,7 +58,7 @@
   }
   
   form button:hover {
-    background: #9c4dcc;
+    background: #86fcf2;
   }
   
   /* Filters */
@@ -251,7 +251,7 @@
 }
 
 .search-bar button:hover {
-  background: #9c4dcc;
+  background: #86fcf2;
 }
 
 .edit-btn {
